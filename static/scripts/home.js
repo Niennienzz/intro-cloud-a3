@@ -9,12 +9,12 @@ var homePageApp = new Vue({
     // data to be kept in client memory
     data: {
         isInGallery: true,
-        userLogoutAPI: '/logout',
-        imageUploadAPI: '/api/pic_upload',
-        imageURLListAPI: '/api/pic_urls',
-        imageContentAPI: '/api/pic/',
+        userLogoutAPI: '/dev/logout',
+        userDataAPI: '/dev/api/user/data',
+        imageUploadAPI: '/dev/api/pic',
+        imageContentAPI: '/dev/api/pic_content',
         accessToken: '',
-        picUrls: {},
+        picUrls: [],
         thumbnailURLList: [],
         currentTransforms: [],
         currentTransformDesc: ['Original', 'Flopped', 'Red Shifted', 'Sinusoidal']
@@ -32,7 +32,7 @@ var homePageApp = new Vue({
                 "Invalid user access token, please log in again.",
                 "error"
             ).then( function() {
-                window.location.href = "/";
+                window.location.href = "/dev";
             });
             return;
         }
@@ -40,12 +40,13 @@ var homePageApp = new Vue({
 
         // request image urls associated with current user
         let xhr = new XMLHttpRequest();
-        xhr.open("GET", self.imageURLListAPI)
+        xhr.open("GET", self.userDataAPI)
         xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
         xhr.onreadystatechange = function(vm) {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 let jsonResponse = JSON.parse(xhr.responseText);
-                self.picUrls = jsonResponse;
+                console.log(jsonResponse);
+                self.picUrls = jsonResponse.images;
                 return;
             }
             else if (xhr.readyState == 4 && xhr.status == 401) {
@@ -54,7 +55,7 @@ var homePageApp = new Vue({
                     "Invalid user access token, please log in again.",
                     "error"
                 ).then( function() {
-                    window.location.href = "/";
+                    window.location.href = "/dev";
                 });
                 return;
             }
@@ -83,11 +84,8 @@ var homePageApp = new Vue({
         switchToImageTransformView: function(index) {
             let self = this;
             self.isInGallery = false;
-            let current = self.picUrls.pic_urls[index];
+            let current = self.picUrls.images[index];
             self.currentTransforms.push(self.imageContentAPI + current.origin_url)
-            self.currentTransforms.push(self.imageContentAPI + current.trans1_url)
-            self.currentTransforms.push(self.imageContentAPI + current.trans2_url)
-            self.currentTransforms.push(self.imageContentAPI + current.trans3_url)
             return;
         },
 
@@ -115,6 +113,14 @@ var homePageApp = new Vue({
                         self.refreshPicUrls();
                     });
                 }
+                else if (xhr.readyState == 4 && xhr.status == 400) {
+                    swal(
+                        "Oops...",
+                        "Seems that no image is chosen.",
+                        "error"
+                    );
+                    return;
+                }
             }.bind(xhr, this)
             xhr.send(formData);
             return;
@@ -131,7 +137,7 @@ var homePageApp = new Vue({
                         "You are now logged out.",
                         "success"
                     ).then( function() {
-                        window.location.href = "/";
+                        window.location.href = "/dev";
                     });
                     return;
                 }
@@ -143,12 +149,12 @@ var homePageApp = new Vue({
         refreshPicUrls: function() {
             let self = this;
             let xhr = new XMLHttpRequest();
-            xhr.open("GET", self.imageURLListAPI)
+            xhr.open("GET", self.userDataAPI)
             xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
             xhr.onreadystatechange = function(vm) {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     let jsonResponse = JSON.parse(xhr.responseText);
-                    self.picUrls = jsonResponse;
+                    self.picUrls = jsonResponse.images;
                     return;
                 }
                 else if (xhr.readyState == 4 && xhr.status == 401) {
@@ -157,7 +163,7 @@ var homePageApp = new Vue({
                         "Invalid user access token, please log in again.",
                         "error"
                     ).then( function() {
-                        window.location.href = "/";
+                        window.location.href = "/dev";
                     });
                     return;
                 }
@@ -174,9 +180,9 @@ var homePageApp = new Vue({
         picUrls: function(val) {
             let self = this;
             let results = [];
-            let len =  val.pic_urls.length;
+            let len =  val.images.length;
             for (let i = 0; i < len; i++) {
-                results.push(self.imageContentAPI + val.pic_urls[i].thumb_url);
+                results.push(self.imageContentAPI + val.images[i].thumb_url);
             }
             self.thumbnailURLList = results;
         }

@@ -77,7 +77,9 @@ class UserModel:
 		return response
 
 	def update_user(self):
-		pass
+		table = self.dynamodb_resource.Table(self.table_name)
+		response = table.put_item(Item=self.json())
+		return response
 
 	@classmethod
 	def get_user(cls, pk_name, pk_value):
@@ -101,6 +103,17 @@ class UserModel:
 		user.image_sets = user_dict.get('image_sets', [])
 		user.journals = user_dict.get('journals', [])
 		return user
+
+	def json(self):
+		return {
+			'username': self.username,
+			'id': self.id,
+			'password': self.password,
+			'pwdsalt': self.pwdsalt,
+			'images': self.images,
+			'image_sets': self.image_sets,
+			'journals': self.journals
+		}
 
 	@classmethod
 	def get_table_metadata(cls):

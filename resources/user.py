@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse
+from flask_jwt import jwt_required, current_identity
 from models.user import UserModel
 
 
@@ -25,7 +26,7 @@ class UserRegister(Resource):
 
 	def get(self):
 		"""
-		Get table meta data. (GEt)
+		Get table meta data. (GET)
 		:return:
 			JSON: Registration success or fail message.
 			int: HTTP status code, 200 for Success and 400 for Bad Request.
@@ -54,11 +55,30 @@ class UserRegister(Resource):
 		return {'message': 'user created successfully'}, 201
 
 
-class UserUpdate(Resource):
+class UserData(Resource):
 	"""
-	UserUpdate provides user update/delete/patch API.
+	UserData provides user update/delete/patch API.
 
 	Attributes:
 	parser (RequestParser): The Flask-RESTful request parser.
 	It parses username and password from the JSON payload during user registration.
 	"""
+	@jwt_required()
+	def get(self):
+		"""
+		Get user data. (GET)
+		:return:
+			JSON: User data dictionary.
+			int: HTTP status code, 200 for Success and 400 for Bad Request.
+		"""
+		user = UserModel.get_user(pk_name='username', pk_value=current_identity.id)
+		user.password = ''
+		user.pwdsalt = ''
+		if user:
+			return user.json(), 200
+		else:
+			return None, 400
+
+	@jwt_required()
+	def post(self):
+		pass
