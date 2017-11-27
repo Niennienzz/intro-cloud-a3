@@ -12,12 +12,11 @@ var homePageApp = new Vue({
         userLogoutAPI: '/dev/logout',
         userDataAPI: '/dev/api/user/data',
         imageUploadAPI: '/dev/api/pic',
-        imageContentAPI: '/dev/api/pic_content',
+        imageContentAPI: '/dev/api/pic_content/',
         accessToken: '',
-        picUrls: [],
+        currentUser: {},
         thumbnailURLList: [],
-        currentTransforms: [],
-        currentTransformDesc: ['Original', 'Flopped', 'Red Shifted', 'Sinusoidal']
+        currentTransforms: []
     },
 
     // set up on creation values
@@ -46,7 +45,7 @@ var homePageApp = new Vue({
             if (xhr.readyState == 4 && xhr.status == 200) {
                 let jsonResponse = JSON.parse(xhr.responseText);
                 console.log(jsonResponse);
-                self.picUrls = jsonResponse.images;
+                self.currentUser = jsonResponse;
                 return;
             }
             else if (xhr.readyState == 4 && xhr.status == 401) {
@@ -84,8 +83,8 @@ var homePageApp = new Vue({
         switchToImageTransformView: function(index) {
             let self = this;
             self.isInGallery = false;
-            let current = self.picUrls.images[index];
-            self.currentTransforms.push(self.imageContentAPI + current.origin_url)
+            let current = self.currentUser.images[index];
+            self.currentTransforms.push(self.imageContentAPI + current);
             return;
         },
 
@@ -154,7 +153,7 @@ var homePageApp = new Vue({
             xhr.onreadystatechange = function(vm) {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     let jsonResponse = JSON.parse(xhr.responseText);
-                    self.picUrls = jsonResponse.images;
+                    self.currentUser = jsonResponse;
                     return;
                 }
                 else if (xhr.readyState == 4 && xhr.status == 401) {
@@ -177,12 +176,12 @@ var homePageApp = new Vue({
     // watched properties
     watch: {
 
-        picUrls: function(val) {
+        currentUser: function(val) {
             let self = this;
             let results = [];
             let len =  val.images.length;
             for (let i = 0; i < len; i++) {
-                results.push(self.imageContentAPI + val.images[i].thumb_url);
+                results.push(self.imageContentAPI + val.images[i].replace("origin.jpg", "thumbnail.jpg"));
             }
             self.thumbnailURLList = results;
         }

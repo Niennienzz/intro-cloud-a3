@@ -70,7 +70,7 @@ def logout():
 api.add_resource(UserRegister, '/api/user/register')
 api.add_resource(UserData, '/api/user/data')
 api.add_resource(PicUpload, '/api/pic')
-api.add_resource(PicContent, '/api/pic_content')
+api.add_resource(PicContent, '/api/pic_content/<path:file_path>')
 
 
 if __name__ == '__main__':
