@@ -47,8 +47,18 @@ class UserRegister(Resource):
 		data = UserRegister.parser.parse_args()
 		response = UserModel.scan_table(filter_key='username', filter_value=data['username'])
 		if response['Count'] != 0:
-			return {'message': 'user already exist'}, 400
+			return {'message': 'user already exists'}, 400
 
 		user = UserModel(data['username'], data['password'])
 		user.set_user()
 		return {'message': 'user created successfully'}, 201
+
+
+class UserUpdate(Resource):
+	"""
+	UserUpdate provides user update/delete/patch API.
+
+	Attributes:
+	parser (RequestParser): The Flask-RESTful request parser.
+	It parses username and password from the JSON payload during user registration.
+	"""

@@ -3,6 +3,8 @@ from boto3.dynamodb.conditions import Key
 from const.const import Constants
 from hashlib import sha256
 from random import choice
+import json
+from collections import namedtuple
 
 
 class UserModel:
@@ -16,7 +18,8 @@ class UserModel:
 	JSON Schema:
 		user {
 			username: string,
-			passsalt: string,
+			id: string, // this is the same as username
+			pwdsalt: string,
 			password: string,
 			images: [
 					string,
@@ -45,26 +48,19 @@ class UserModel:
 
 	def __init__(self, username, password):
 		self.username = username
+		self.id = username
 		self.pwdsalt = ''.join(choice(Constants.ALPHABET) for i in range(16))
 		self.password = sha256((password + self.pwdsalt).encode('utf-8')).hexdigest()
-
-	def get_user(self, pk_name, pk_value):
-		"""
-		Return a user from table according to primary key.
-		:param pk_name: string
-		:param pk_value: string
-		:return: JSON: user
-		"""
-		table = self.dynamodb_resource.Table(self.table_name)
-		response = table.get_item(Key={pk_name: pk_value})
-		return response
+		self.images = []
+		self.image_sets = []
+		self.journals = []
 
 	def set_user(self):
 		"""
 		Add a user to table.
-		:return: JSON: user
+		:return: JSON: response
 		"""
-		col_dict = {'username': self.username, 'pwdsalt': self.pwdsalt, 'password': self.password}
+		col_dict = {'username': self.username, 'id': self.id, 'pwdsalt': self.pwdsalt, 'password': self.password}
 		table = self.dynamodb_resource.Table(self.table_name)
 		response = table.put_item(Item=col_dict)
 		return response
@@ -74,11 +70,37 @@ class UserModel:
 		Delete a user from table according to primary key.
 		:param pk_name: string
 		:param pk_value: string
-		:return: JSON: user
+		:return: JSON: response
 		"""
 		table = self.dynamodb_resource.Table(self.table_name)
 		response = table.delete_item(Key={pk_name: pk_value})
 		return response
+
+	def update_user(self):
+		pass
+
+	@classmethod
+	def get_user(cls, pk_name, pk_value):
+		"""
+		Return a user from table according to primary key.
+		:param pk_name: string
+		:param pk_value: string
+		:return: JSON: user
+		"""
+		table = cls.dynamodb_resource.Table(cls.table_name)
+		response = table.get_item(Key={pk_name: pk_value})
+		user_dict = response.get('Item', None)
+		if not user_dict:
+			return None
+		user = UserModel('', '')
+		user.username = user_dict.get('username', '')
+		user.id = user_dict.get('id', '')
+		user.password = user_dict.get('password', '')
+		user.pwdsalt = user_dict.get('pwdsalt', '')
+		user.images = user_dict.get('images', [])
+		user.image_sets = user_dict.get('image_sets', [])
+		user.journals = user_dict.get('journals', [])
+		return user
 
 	@classmethod
 	def get_table_metadata(cls):
@@ -101,7 +123,7 @@ class UserModel:
 		Scan the users table according to filter_key and filter_value.
 		:param filter_key: string
 		:param filter_value: string
-		:return: JSON: list of users
+		:return: JSON: response
 		"""
 		table = cls.dynamodb_resource.Table(cls.table_name)
 		if filter_key and filter_value:
@@ -117,7 +139,7 @@ class UserModel:
 		Query the users table according to filter_key and filter_value.
 		:param filter_key: string
 		:param filter_value: string
-		:return: JSON: list of users
+		:return: JSON: response
 		"""
 		table = cls.dynamodb_resource.Table(cls.table_name)
 		if filter_key and filter_value:

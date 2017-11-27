@@ -13,11 +13,11 @@ def authenticate(username, password):
 
 	:param username: string
 	:param password: string
-
-	:return: UserModel: The user account if auth is successful, otherwise None.
+	:return: dict: The UserModel if auth is successful, otherwise None.
 	"""
-	user = UserModel.scan_table(filter_key='username', filter_value=username)
+	user = UserModel.get_user(pk_name='username', pk_value=username)
 	if user:
+		print(user.__dict__)
 		password_hash = sha256((password + user.pwdsalt).encode('utf-8')).hexdigest()
 		if safe_str_cmp(password_hash.encode('utf-8'), user.password.encode('utf-8')):
 			return user
@@ -30,8 +30,7 @@ def identity(payload):
 	It retrieves the user account from payload.
 
 	:param payload: The JWT payload.
-
 	:return: UserModel: The user account.
 	"""
 	username = payload['identity']
-	return UserModel.scan_table(filter_key='username', filter_value=username)
+	return UserModel.get_user(pk_name='username', pk_value=username)

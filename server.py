@@ -1,15 +1,26 @@
 import json
+from datetime import timedelta
 from flask import Flask, session, request, render_template, redirect, url_for
 from flask_restful import Api
 from flask_jwt import JWT
 from security import authenticate, identity
 from resources.user import UserRegister
 
-app = Flask(__name__)
+
+# Application initialization and configs.
+# Flask is initialized for this application.
+# Flask-SQLAlchemy uses MySQL server, and uses 'db' as backing database.
+# Flask-JWT tokens have expiration time of one day.
+def create_app():
+    ap = Flask(__name__)
+    ap.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
+    ap.secret_key = 'An_App_Secret_Key'
+    return ap
 
 
 # Flask-JWT authorization, which by default register the route
 # '/auth' for user authentication.
+app = create_app()
 api = Api(app)
 jwt = JWT(app, authenticate, identity)
 
