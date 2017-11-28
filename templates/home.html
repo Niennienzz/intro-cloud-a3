@@ -44,8 +44,8 @@
             <div class="pure-menu">
                 <a class="pure-menu-heading" href="#" v-on:click="switchToHomeTab()">Home</a>
                 <ul class="pure-menu-list">
-                    <li class="pure-menu-item" v-on:click="switchJournalsTab()"><a href="#" class="pure-menu-link">Journals</a></li>
-                    <li class="pure-menu-item" v-on:click="switchImagesTab()"><a href="#" class="pure-menu-link">Images</a></li>
+                    <li class="pure-menu-item" v-on:click="switchToJournalsTab()"><a href="#" class="pure-menu-link">Journals</a></li>
+                    <li class="pure-menu-item" v-on:click="switchToImagesTab()"><a href="#" class="pure-menu-link">Images</a></li>
                 </ul>
             </div>
         </div>
@@ -115,7 +115,7 @@
                 <div v-else>
                     <h2 class="content-subhead">Image Details</h2>
                     <div class="pure-control-group" style="clear:left;">
-                        <br><button class="pure-button pure-button-primary" v-on:click="switchToGalleryView()">Back to Gallery</button>
+                        <br><button class="pure-button pure-button-primary" v-on:click="switchToImagesTab()">Back to Gallery</button>
                     </div><br>
                     <div class="pure-control-group" style="clear:left;">
                         <div v-for="(url, index) in currentTransforms" class="pure-control-group">

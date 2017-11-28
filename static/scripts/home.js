@@ -10,6 +10,7 @@ var homePageApp = new Vue({
     data: {
         isInHomeTab: true,
         isInJournalsTab: false,
+        isInJournalList: true,
         isInImagesTab: false,
         isInGallery: true,
 
@@ -92,48 +93,57 @@ var homePageApp = new Vue({
             return results;
         },
 
+        // home tab
         switchToHomeTab: function() {
             let self = this;
             self.isInHomeTab = true;
             self.isInJournalsTab = false;
+            self.isInJournalList = true;
             self.isInImagesTab = false;
             self.isInGallery = true;
         },
 
-        switchJournalsTab: function() {
+        // journals tab, journal list
+        switchToJournalsTab: function() {
             let self = this;
             self.isInHomeTab = false;
             self.isInJournalsTab = true;
+            self.isInJournalList = true;
             self.isInImagesTab = false;
             self.isInGallery = true;
         },
 
-        switchImagesTab: function() {
+        // journals tab, editor
+        switchToJournalEditorView: function() {
+            let self = this;
+            self.isInHomeTab = false;
+            self.isInJournalsTab = true;
+            self.isInJournalList = false;
+            self.isInImagesTab = false;
+            self.isInGallery = true;
+        },
+
+        // images tab, gallery
+        switchToImagesTab: function() {
             let self = this;
             self.isInHomeTab = false;
             self.isInJournalsTab = false;
+            self.isInJournalList = true;
             self.isInImagesTab = true;
             self.isInGallery = true;
         },
 
+        // images tab, detail
         switchToImageTransformView: function(index) {
             let self = this;
             self.isInHomeTab = false;
             self.isInJournalsTab = false;
+            self.isInJournalList = true;
             self.isInImagesTab = true;
             self.isInGallery = false;
             let current = self.currentUser.images[index];
             self.currentTransforms.push(self.imageContentAPI + current);
             return;
-        },
-
-        switchToGalleryView: function() {
-            let self = this;
-            self.isInHomeTab = false;
-            self.isInJournalsTab = false;
-            self.isInImagesTab = true;
-            self.isInGallery = true;
-            self.currentTransforms = [];
         },
 
         uploadNewImage: function() {
