@@ -2,6 +2,7 @@
   <dictionary name="zhehui">
     <words>
       <w>boto</w>
+      <w>debounce</w>
       <w>dynamodb</w>
       <w>magick</w>
     </words>

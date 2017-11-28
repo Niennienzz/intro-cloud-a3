@@ -8,11 +8,21 @@ var homePageApp = new Vue({
 
     // data to be kept in client memory
     data: {
+        isInHomeTab: true,
+        isInJournalsTab: false,
+        isInImagesTab: false,
         isInGallery: true,
-        userLogoutAPI: '/dev/logout',
-        userDataAPI: '/dev/api/user/data',
-        imageUploadAPI: '/dev/api/pic',
-        imageContentAPI: '/dev/api/pic_content/',
+
+//        userLogoutAPI: '/dev/logout',
+//        userDataAPI: '/dev/api/user/data',
+//        imageUploadAPI: '/dev/api/pic',
+//        imageContentAPI: '/dev/api/pic_content/',
+
+        userLogoutAPI: '/logout',
+        userDataAPI: '/api/user/data',
+        imageUploadAPI: '/api/pic',
+        imageContentAPI: '/api/pic_content/',
+
         accessToken: '',
         currentUser: {},
         thumbnailURLList: [],
@@ -31,7 +41,8 @@ var homePageApp = new Vue({
                 "Invalid user access token, please log in again.",
                 "error"
             ).then( function() {
-                window.location.href = "/dev";
+//                window.location.href = "/dev";
+                window.location.href = "/";
             });
             return;
         }
@@ -54,7 +65,8 @@ var homePageApp = new Vue({
                     "Invalid user access token, please log in again.",
                     "error"
                 ).then( function() {
-                    window.location.href = "/dev";
+//                    window.location.href = "/dev";
+                    window.location.href = "/";
                 });
                 return;
             }
@@ -80,8 +92,35 @@ var homePageApp = new Vue({
             return results;
         },
 
+        switchToHomeTab: function() {
+            let self = this;
+            self.isInHomeTab = true;
+            self.isInJournalsTab = false;
+            self.isInImagesTab = false;
+            self.isInGallery = true;
+        },
+
+        switchJournalsTab: function() {
+            let self = this;
+            self.isInHomeTab = false;
+            self.isInJournalsTab = true;
+            self.isInImagesTab = false;
+            self.isInGallery = true;
+        },
+
+        switchImagesTab: function() {
+            let self = this;
+            self.isInHomeTab = false;
+            self.isInJournalsTab = false;
+            self.isInImagesTab = true;
+            self.isInGallery = true;
+        },
+
         switchToImageTransformView: function(index) {
             let self = this;
+            self.isInHomeTab = false;
+            self.isInJournalsTab = false;
+            self.isInImagesTab = true;
             self.isInGallery = false;
             let current = self.currentUser.images[index];
             self.currentTransforms.push(self.imageContentAPI + current);
@@ -90,6 +129,9 @@ var homePageApp = new Vue({
 
         switchToGalleryView: function() {
             let self = this;
+            self.isInHomeTab = false;
+            self.isInJournalsTab = false;
+            self.isInImagesTab = true;
             self.isInGallery = true;
             self.currentTransforms = [];
         },
@@ -136,7 +178,8 @@ var homePageApp = new Vue({
                         "You are now logged out.",
                         "success"
                     ).then( function() {
-                        window.location.href = "/dev";
+//                        window.location.href = "/dev";
+                        window.location.href = "/";
                     });
                     return;
                 }
@@ -162,7 +205,8 @@ var homePageApp = new Vue({
                         "Invalid user access token, please log in again.",
                         "error"
                     ).then( function() {
-                        window.location.href = "/dev";
+//                        window.location.href = "/dev";
+                        window.location.href = "/";
                     });
                     return;
                 }

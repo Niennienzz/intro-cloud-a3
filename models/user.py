@@ -3,8 +3,6 @@ from boto3.dynamodb.conditions import Key
 from const.const import Constants
 from hashlib import sha256
 from random import choice
-import json
-from collections import namedtuple
 
 
 class UserModel:
@@ -37,7 +35,8 @@ class UserModel:
 			],
 			journals:
 				[
-					string,
+					journal: {},
+					journal: {},
 					...
 				]
 		}

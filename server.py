@@ -49,7 +49,14 @@ def index():
 def home():
     if 'token' not in session:
         return redirect(url_for('index'))
-    return render_template('home.html', messages=json.dumps({"token": session['token']}))
+    return render_template('home.html', messages=json.dumps({'token': session['token']}))
+
+
+@app.route('/journal')
+def journal():
+    # if 'token' not in session:
+    #     return redirect(url_for('index'))
+    return render_template('journal.html', message=json.dumps({'token': session['token']}))
 
 
 @app.route('/login', methods=['POST'])
