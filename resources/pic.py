@@ -57,3 +57,17 @@ class PicContent(Resource):
 		response = make_response(data)
 		response.headers['content-type'] = 'image/jpeg'
 		return response
+
+	@jwt_required()
+	def delete(self, file_path):
+		"""
+		Delete an image data. (GET)
+
+		This method deletes an image in the storage.
+		It also updates the user database.
+
+		:returns:
+			(int): HTTP status code, 200 for Success, 400 for Bad Request, and 404 for Not Found.
+		"""
+		if not file_path:
+			return {'message': 'no image path provided'}, 400
