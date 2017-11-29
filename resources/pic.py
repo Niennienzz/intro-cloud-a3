@@ -3,13 +3,22 @@ from flask_restful import Resource
 from flask_jwt import jwt_required, current_identity
 from store.trans import PicTrans
 from models.user import UserModel
-from store.s3 import PicS3Store
+from store.s3 import S3Store
 
 
 class PicUpload(Resource):
-
+	"""
+	PicUpload provides image upload API.
+	"""
 	@jwt_required()
 	def post(self):
+		"""
+		Upload a new image.
+
+		:return:
+			(JSON): Image upload success or fail message.
+			(int): HTTP status code.
+		"""
 		f = request.files['file']
 		if f is None:
 			return {'message': 'no file chosen'}, 400
@@ -34,7 +43,7 @@ class PicContent(Resource):
 	"""
 	PicContent provides image data access API.
 	"""
-	def get(self, file_path):
+	def get(self, filepath):
 		"""
 		Retrieve an image data. (GET)
 
@@ -46,11 +55,11 @@ class PicContent(Resource):
 			(bytes): Image data in binary.
 			(int): HTTP status code, 200 for Success, 400 for Bad Request, and 404 for Not Found.
 		"""
-		if not file_path:
+		if not filepath:
 			return {'message': 'no image path provided'}, 400
-		if file_path.startswith('images/'):
-			file_path = file_path[len('images/'):]
-		pic_store = PicS3Store(file_path, None)
+		if filepath.startswith('images/'):
+			filepath = filepath[len('images/'):]
+		pic_store = S3Store(filepath, None)
 		data, ok = pic_store.get()
 		if not ok:
 			return {'message': 'no image found'}, 404
@@ -59,7 +68,7 @@ class PicContent(Resource):
 		return response
 
 	@jwt_required()
-	def delete(self, file_path):
+	def delete(self, filepath):
 		"""
 		Delete an image data. (GET)
 
@@ -69,5 +78,5 @@ class PicContent(Resource):
 		:returns:
 			(int): HTTP status code, 200 for Success, 400 for Bad Request, and 404 for Not Found.
 		"""
-		if not file_path:
-			return {'message': 'no image path provided'}, 400
+		if not filepath:
+			return {'message': 'no image found'}, 400

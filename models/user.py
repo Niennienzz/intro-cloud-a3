@@ -35,8 +35,7 @@ class UserModel:
 			],
 			journals:
 				[
-					journal: {},
-					journal: {},
+					string,
 					...
 				]
 		}

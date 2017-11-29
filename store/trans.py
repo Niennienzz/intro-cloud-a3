@@ -2,7 +2,7 @@ import asyncio
 import uuid
 import datetime
 from os import path
-from store.s3 import PicS3Store
+from store.s3 import S3Store
 from wand.image import Image
 
 
@@ -20,14 +20,14 @@ class PicTrans:
 
         The init method takes the input image data and converts it into JPEG format.
         Then the method generates a relative filepath as origin_path.
-        The origin_path has a format of {yyyy-mm-dd}/{uuid}/original.jpg
+        The origin_path has a format of {yyyy-mm-dd}/img/{uuid}/original.jpg
 
         :param data (bytes): The original image data.
         """
         # compose file path
         date = datetime.datetime.now().strftime('%Y-%m-%d')
         _id = uuid.uuid4().hex.upper()
-        self.origin_path = path.join(date, _id, 'origin.jpg')
+        self.origin_path = path.join(date, 'img', _id, 'origin.jpg')
 
         # ensure jpeg image
         with Image(blob=data) as original:
@@ -35,7 +35,7 @@ class PicTrans:
                 self.data = converted.make_blob()
 
         # set original picture storage
-        self.pic_stores = {self.origin_path: PicS3Store(self.origin_path, self.data)}
+        self.pic_stores = {self.origin_path: S3Store(self.origin_path, self.data)}
 
     def trans(self):
         """
@@ -55,9 +55,9 @@ class PicTrans:
             if x > 300 and y > 300:
                 with image.clone() as img:
                     img.crop(width=300, height=300, gravity='center')
-                    self.pic_stores[thum_path] = PicS3Store(thum_path, img.make_blob())
+                    self.pic_stores[thum_path] = S3Store(thum_path, img.make_blob())
             else:
-                self.pic_stores[thum_path] = PicS3Store(thum_path, image.make_blob())
+                self.pic_stores[thum_path] = S3Store(thum_path, image.make_blob())
 
     def save(self):
         """

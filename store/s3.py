@@ -2,7 +2,7 @@ import boto3
 import botocore
 
 
-class PicS3Store:
+class S3Store:
     """
     PicS3Store provides storage access to AWS S3.
 
@@ -24,6 +24,23 @@ class PicS3Store:
         self.data = data
 
     async def save(self):
+        """Save file.
+
+        This method saves the data to AWS S3 with the key.
+
+        :return:
+            (str): Key of the stored object.
+            (bool): True for success, False otherwise.
+        """
+        s3 = boto3.resource('s3')
+        try:
+            obj = s3.Object(self.bucket_name, self.key)
+            obj.put(Body=self.data)
+        except botocore.exceptions.ClientError:
+            return '', False
+        return self.key, True
+
+    def sync_save(self):
         """Save file.
 
         This method saves the data to AWS S3 with the key.
