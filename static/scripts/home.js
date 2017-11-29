@@ -18,16 +18,20 @@ var homePageApp = new Vue({
 //        userDataAPI: '/dev/api/user/data',
 //        imageUploadAPI: '/dev/api/pic',
 //        imageContentAPI: '/dev/api/pic_content/',
+//        journalUploadAPI: '/dev/api/journal',
 
         userLogoutAPI: '/logout',
         userDataAPI: '/api/user/data',
         imageUploadAPI: '/api/pic',
         imageContentAPI: '/api/pic_content/',
+        journalUploadAPI: '/api/journal',
 
         accessToken: '',
         currentUser: {},
         thumbnailURLList: [],
-        currentTransforms: []
+        currentTransforms: [],
+
+        input: '# hello'
     },
 
     // set up on creation values
@@ -101,6 +105,7 @@ var homePageApp = new Vue({
             self.isInJournalList = true;
             self.isInImagesTab = false;
             self.isInGallery = true;
+            self.currentTransforms = []
         },
 
         // journals tab, journal list
@@ -111,6 +116,7 @@ var homePageApp = new Vue({
             self.isInJournalList = true;
             self.isInImagesTab = false;
             self.isInGallery = true;
+            self.currentTransforms = []
         },
 
         // journals tab, editor
@@ -121,6 +127,7 @@ var homePageApp = new Vue({
             self.isInJournalList = false;
             self.isInImagesTab = false;
             self.isInGallery = true;
+            self.currentTransforms = []
         },
 
         // images tab, gallery
@@ -131,6 +138,7 @@ var homePageApp = new Vue({
             self.isInJournalList = true;
             self.isInImagesTab = true;
             self.isInGallery = true;
+            self.currentTransforms = []
         },
 
         // images tab, detail
@@ -148,7 +156,7 @@ var homePageApp = new Vue({
 
         uploadNewImage: function() {
             let self = this;
-            let formElement = document.getElementById("uploadFormInput");
+            let formElement = document.getElementById("uploadImageFormInput");
             let formData = new FormData();
             formData.append("file", formElement.files[0]);
             let xhr = new XMLHttpRequest();
@@ -223,7 +231,42 @@ var homePageApp = new Vue({
             }.bind(xhr, this)
             xhr.send();
             return;
-        }
+        },
+
+        uploadNewJournal: function() {
+            let self = this;
+            let formElement = document.getElementById("uploadJournalFormInput");
+            let formData = new FormData();
+            formData.append("file", formElement.value);
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", self.journalUploadAPI)
+            xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
+            xhr.onreadystatechange = function(vm) {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    swal(
+                        "Success!",
+                        "Journal uploaded successfully.",
+                        "success"
+                    ).then( function() {
+                        self.refreshPicUrls();
+                    });
+                }
+                else if (xhr.readyState == 4 && xhr.status == 400) {
+                    swal(
+                        "Oops...",
+                        "Seems that no journal is chosen.",
+                        "error"
+                    );
+                    return;
+                }
+            }.bind(xhr, this)
+            xhr.send(formData);
+            return;
+        },
+
+        update: _.debounce(function (e) {
+            this.input = e.target.value
+        }, 300)
 
     },
 
@@ -240,6 +283,13 @@ var homePageApp = new Vue({
             self.thumbnailURLList = results;
         }
 
+    },
+
+    // computed properties
+    computed: {
+        compiledMarkdown: function () {
+            return marked(this.input, { sanitize: true })
+        }
     }
 
 })

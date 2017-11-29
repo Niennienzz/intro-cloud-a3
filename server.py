@@ -6,6 +6,7 @@ from flask_jwt import JWT
 from security import authenticate, identity
 from resources.user import UserRegister, UserData
 from resources.pic import PicUpload, PicContent
+from resources.journal import JournalUpload
 import sys
 import os
 from os.path import join
@@ -78,6 +79,7 @@ api.add_resource(UserRegister, '/api/user/register')
 api.add_resource(UserData, '/api/user/data')
 api.add_resource(PicUpload, '/api/pic')
 api.add_resource(PicContent, '/api/pic_content/<path:file_path>')
+api.add_resource(JournalUpload, '/api/journal')
 
 
 if __name__ == '__main__':
