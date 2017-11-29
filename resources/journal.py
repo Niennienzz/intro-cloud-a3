@@ -47,6 +47,31 @@ class JournalUpload(Resource):
 
 		return {'message': 'file uploaded successfully'}
 
+	@jwt_required
+	def put(self):
+		"""
+		Update a journal.
+
+		:return:
+			(JSON): Journal update success or fail message.
+			(int): HTTP status code.
+		"""
+		print(request.form)
+		f = request.form['file']
+		if f is None:
+			return {'message': 'no file chosen'}, 400
+
+		filepath = request.form['filepath']
+		if filepath is None:
+			return {'message': 'no filepath chosen'}, 400
+
+		s3 = S3Store(filepath, f)
+		(result_path, ok) = s3.sync_save()
+		if not ok:
+			return {'message': 'journal upload - internal server error'}, 500
+
+		return {'message': 'file uploaded successfully'}
+
 
 class JournalContent(Resource):
 	"""
@@ -72,18 +97,6 @@ class JournalContent(Resource):
 		response = make_response(data)
 		response.headers['content-type'] = 'text/plain'
 		return response
-
-	@jwt_required
-	def put(self, filepath):
-		"""
-		Update a journal.
-
-		:return:
-			(JSON): Journal update success or fail message.
-			(int): HTTP status code.
-		"""
-		if not filepath:
-			return {'message': 'no journal path provided'}, 400
 
 	@jwt_required()
 	def delete(self, filepath):

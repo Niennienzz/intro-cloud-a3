@@ -19,17 +19,21 @@ var homePageApp = new Vue({
 //        imageUploadAPI: '/dev/api/pic',
 //        imageContentAPI: '/dev/api/pic_content/',
 //        journalUploadAPI: '/dev/api/journal',
+//        journalContentAPI: '/dev/api/journal_content/',
 
         userLogoutAPI: '/logout',
         userDataAPI: '/api/user/data',
         imageUploadAPI: '/api/pic',
         imageContentAPI: '/api/pic_content/',
         journalUploadAPI: '/api/journal',
+        journalContentAPI: '/api/journal_content/',
 
         accessToken: '',
         currentUser: {},
         thumbnailURLList: [],
         currentTransforms: [],
+        journalURLList: [],
+        currentJournal: '',
 
         input: '# hello'
     },
@@ -105,7 +109,8 @@ var homePageApp = new Vue({
             self.isInJournalList = true;
             self.isInImagesTab = false;
             self.isInGallery = true;
-            self.currentTransforms = []
+            self.currentTransforms = [];
+            self.currentJournal = '';
         },
 
         // journals tab, journal list
@@ -116,18 +121,25 @@ var homePageApp = new Vue({
             self.isInJournalList = true;
             self.isInImagesTab = false;
             self.isInGallery = true;
-            self.currentTransforms = []
+            self.currentTransforms = [];
+            self.currentJournal = '';
         },
 
         // journals tab, editor
-        switchToJournalEditorView: function() {
+        switchToJournalEditorView: function(url) {
             let self = this;
             self.isInHomeTab = false;
             self.isInJournalsTab = true;
             self.isInJournalList = false;
             self.isInImagesTab = false;
             self.isInGallery = true;
-            self.currentTransforms = []
+            self.currentTransforms = [];
+            if (url !== '') {
+                self.currentJournal = url;
+            }
+            else {
+                self.currentJournal = '';
+            }
         },
 
         // images tab, gallery
@@ -138,7 +150,8 @@ var homePageApp = new Vue({
             self.isInJournalList = true;
             self.isInImagesTab = true;
             self.isInGallery = true;
-            self.currentTransforms = []
+            self.currentTransforms = [];
+            self.currentJournal = '';
         },
 
         // images tab, detail
@@ -151,6 +164,7 @@ var homePageApp = new Vue({
             self.isInGallery = false;
             let current = self.currentUser.images[index];
             self.currentTransforms.push(self.imageContentAPI + current);
+            self.currentJournal = '';
             return;
         },
 
@@ -239,7 +253,15 @@ var homePageApp = new Vue({
             let formData = new FormData();
             formData.append("file", formElement.value);
             let xhr = new XMLHttpRequest();
-            xhr.open("POST", self.journalUploadAPI)
+            let method = "POST";
+            if (self.currentJournal !== '') {
+                method = "PUT";
+                formData.append("filepath", self.currentJournal);
+                for (var pair of formData.entries()) {
+                    console.log(pair[0]+ ', ' + pair[1]);
+                }
+            }
+            xhr.open(method, self.journalUploadAPI);
             xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
             xhr.onreadystatechange = function(vm) {
                 if (xhr.readyState == 4 && xhr.status == 200) {
@@ -275,12 +297,13 @@ var homePageApp = new Vue({
 
         currentUser: function(val) {
             let self = this;
-            let results = [];
+            let thumbList = [];
             let len =  val.images.length;
             for (let i = 0; i < len; i++) {
-                results.push(self.imageContentAPI + val.images[i].replace("origin.jpg", "thumbnail.jpg"));
+                thumbList.push(self.imageContentAPI + val.images[i].replace("origin.jpg", "thumbnail.jpg"));
             }
-            self.thumbnailURLList = results;
+            self.thumbnailURLList = thumbList;
+            self.journalURLList = val.journals;
         }
 
     },

@@ -90,7 +90,12 @@
             <div class="content">
                 <div v-if="isInJournalList">
                     <h2 class="content-subhead">Journals</h2>
-                    <button class="pure-button pure-button-primary" v-on:click="switchToJournalEditorView()">New Journal</button>
+                    <div class="pure-control-group" style="clear:left;">
+                        <div v-for="(url, index) in journalURLList" class="pure-control-group">
+                            <p v-on:click="switchToJournalEditorView(url)" v-bind:src=url>Journal #${index+1}</p>
+                        </div>
+                    </div><br>
+                    <button class="pure-button pure-button-primary" v-on:click="switchToJournalEditorView('')">New Journal</button>
                 </div>
                 <div v-else>
                     <h2 class="content-subhead">New Journal</h2>
