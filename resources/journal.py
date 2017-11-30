@@ -47,7 +47,7 @@ class JournalUpload(Resource):
 
 		return {'message': 'file uploaded successfully'}
 
-	@jwt_required
+	@jwt_required()
 	def put(self):
 		"""
 		Update a journal.
@@ -56,7 +56,6 @@ class JournalUpload(Resource):
 			(JSON): Journal update success or fail message.
 			(int): HTTP status code.
 		"""
-		print(request.form)
 		f = request.form['file']
 		if f is None:
 			return {'message': 'no file chosen'}, 400

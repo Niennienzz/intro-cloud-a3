@@ -35,7 +35,7 @@ var homePageApp = new Vue({
         journalURLList: [],
         currentJournal: '',
 
-        input: '# hello'
+        input: '# Hello'
     },
 
     // set up on creation values
@@ -59,7 +59,7 @@ var homePageApp = new Vue({
 
         // request image urls associated with current user
         let xhr = new XMLHttpRequest();
-        xhr.open("GET", self.userDataAPI)
+        xhr.open("GET", self.userDataAPI);
         xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
         xhr.onreadystatechange = function(vm) {
             if (xhr.readyState == 4 && xhr.status == 200) {
@@ -174,7 +174,7 @@ var homePageApp = new Vue({
             let formData = new FormData();
             formData.append("file", formElement.files[0]);
             let xhr = new XMLHttpRequest();
-            xhr.open("POST", self.imageUploadAPI)
+            xhr.open("POST", self.imageUploadAPI);
             xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
             xhr.onreadystatechange = function(vm) {
                 if (xhr.readyState == 4 && xhr.status == 200) {
@@ -304,7 +304,24 @@ var homePageApp = new Vue({
             }
             self.thumbnailURLList = thumbList;
             self.journalURLList = val.journals;
-        }
+        },
+
+        currentJournal: function(val) {
+            if (val === "") {
+                return;
+            }
+            let self = this;
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", self.journalContentAPI + val);
+            xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
+            xhr.onreadystatechange = function(vm) {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    self.input = xhr.responseText;
+                    return;
+                }
+            }.bind(xhr, this)
+            xhr.send();
+            }
 
     },
 
