@@ -20,6 +20,7 @@ var homePageApp = new Vue({
 //        imageContentAPI: '/dev/api/pic_content/',
 //        journalUploadAPI: '/dev/api/journal',
 //        journalContentAPI: '/dev/api/journal_content/',
+//        journalPDFAPI: 'dev/api/journal_pdf',
 
         userLogoutAPI: '/logout',
         userDataAPI: '/api/user/data',
@@ -27,6 +28,7 @@ var homePageApp = new Vue({
         imageContentAPI: '/api/pic_content/',
         journalUploadAPI: '/api/journal',
         journalContentAPI: '/api/journal_content/',
+        journalPDFAPI: '/api/journal_pdf',
 
         accessToken: '',
         currentUser: {},
@@ -64,7 +66,6 @@ var homePageApp = new Vue({
         xhr.onreadystatechange = function(vm) {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 let jsonResponse = JSON.parse(xhr.responseText);
-                console.log(jsonResponse);
                 self.currentUser = jsonResponse;
                 return;
             }
@@ -247,9 +248,9 @@ var homePageApp = new Vue({
             return;
         },
 
-        uploadNewJournal: function() {
+        uploadJournal: function() {
             let self = this;
-            let formElement = document.getElementById("uploadJournalFormInput");
+            let formElement = document.getElementById("journalFormInput");
             let formData = new FormData();
             formData.append("file", formElement.value);
             let xhr = new XMLHttpRequest();
@@ -257,9 +258,6 @@ var homePageApp = new Vue({
             if (self.currentJournal !== '') {
                 method = "PUT";
                 formData.append("filepath", self.currentJournal);
-                for (var pair of formData.entries()) {
-                    console.log(pair[0]+ ', ' + pair[1]);
-                }
             }
             xhr.open(method, self.journalUploadAPI);
             xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
@@ -284,6 +282,32 @@ var homePageApp = new Vue({
             }.bind(xhr, this)
             xhr.send(formData);
             return;
+        },
+
+        downloadJournal: function() {
+            let self = this;
+            let formElement = document.getElementById("journalFormInput");
+            let formData = new FormData();
+            formData.append("file", formElement.value);
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", self.journalPDFAPI);
+            xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
+            xhr.onreadystatechange = function(vm) {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    let blob = new Blob([xhr.response], {type: "application/pdf"});
+                    let objectUrl = URL.createObjectURL(blob);
+                    window.open(objectUrl);
+                }
+                else if (xhr.readyState == 4 && xhr.status == 400) {
+                    swal(
+                        "Oops...",
+                        "Seems that no journal is chosen.",
+                        "error"
+                    );
+                    return;
+                }
+            }.bind(xhr, this)
+            xhr.send(formData);
         },
 
         update: _.debounce(function (e) {

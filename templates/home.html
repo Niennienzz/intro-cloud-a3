@@ -105,13 +105,14 @@
                                 <div id="editor">
                                     <div class="pure-g">
                                         <div class="pure-u-1-2">
-                                            <textarea id="uploadJournalFormInput" :value="input" @input="update"></textarea>
+                                            <textarea id="journalFormInput" :value="input" @input="update"></textarea>
                                         </div>
                                         <div class="pure-u-1-2">
-                                            <div v-html="compiledMarkdown"></div>
+                                            <div id="journalPDFInput" v-html="compiledMarkdown"></div>
                                         </div>
                                     </div>
-                                    <input id="uploadJournalButton" type="button" value="Upload" class="pure-button pure-button-primary" v-on:click="uploadNewJournal()">
+                                    <input id="uploadJournalButton" type="button" value="Save" class="pure-button pure-button-primary" v-on:click="uploadJournal()">
+                                    <input id="extractJournalButton" type="button" value="Download PDF" class="pure-button pure-button-primary" v-on:click="downloadJournal()">
                                 </div>
                             </fieldset>
                         </form>
