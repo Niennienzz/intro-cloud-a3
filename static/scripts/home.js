@@ -291,15 +291,14 @@ var homePageApp = new Vue({
             let xhr = new XMLHttpRequest();
             xhr.open("POST", self.journalPDFAPI);
             xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
+            xhr.responseType = "blob";
             xhr.onload = function(e) {
                 if (this.status == 200) {
-                    let blob = new Blob([this.response], {type: 'application/pdf'});
-                    let downloadUrl = URL.createObjectURL(blob);
-                    let a = document.createElement("a");
-                    a.href = downloadUrl;
-                    a.download = "journal.pdf";
-                    document.body.appendChild(a);
-                    a.click();
+                    let blob = xhr.response;
+                    let link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "journal.pdf";
+                    link.click();
                 } else {
                     swal(
                         "Oops...",
