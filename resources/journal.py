@@ -89,7 +89,8 @@ class JournalPDF(Resource):
 		f = request.form['file']
 		if f is None:
 			return {'message': 'no file chosen'}, 400
-		return render_pdf(HTML(string=f))
+		html = render_template('journal.html')
+		return render_pdf(HTML(string=html))
 
 
 class JournalContent(Resource):

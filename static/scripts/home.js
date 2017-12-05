@@ -286,27 +286,28 @@ var homePageApp = new Vue({
 
         downloadJournal: function() {
             let self = this;
-            let formElement = document.getElementById("journalFormInput");
             let formData = new FormData();
-            formData.append("file", formElement.value);
+            formData.append("markdown", self.compiledMarkdown);
             let xhr = new XMLHttpRequest();
             xhr.open("POST", self.journalPDFAPI);
             xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
-            xhr.onreadystatechange = function(vm) {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    let blob = new Blob([xhr.response], {type: "application/pdf"});
-                    let objectUrl = URL.createObjectURL(blob);
-                    window.open(objectUrl);
-                }
-                else if (xhr.readyState == 4 && xhr.status == 400) {
+            xhr.onload = function(e) {
+                if (this.status == 200) {
+                    let blob = new Blob([this.response], {type: 'application/pdf'});
+                    let downloadUrl = URL.createObjectURL(blob);
+                    let a = document.createElement("a");
+                    a.href = downloadUrl;
+                    a.download = "journal.pdf";
+                    document.body.appendChild(a);
+                    a.click();
+                } else {
                     swal(
                         "Oops...",
-                        "Seems that no journal is chosen.",
+                        "Unable to download PDF.",
                         "error"
                     );
-                    return;
                 }
-            }.bind(xhr, this)
+            };
             xhr.send(formData);
         },
 

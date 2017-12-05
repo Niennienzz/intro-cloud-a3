@@ -1,15 +1,16 @@
 import json
+import sys
+import os
+from os.path import join
 from datetime import timedelta
 from flask import Flask, session, request, render_template, redirect, url_for
 from flask_restful import Api
 from flask_jwt import JWT
+from flask_weasyprint import HTML, render_pdf
 from security import authenticate, identity
 from resources.user import UserRegister, UserData
 from resources.pic import PicUpload, PicContent
-from resources.journal import JournalUpload, JournalContent, JournalPDF
-import sys
-import os
-from os.path import join
+from resources.journal import JournalUpload, JournalContent
 
 
 # Application initialization and configs.
@@ -55,8 +56,8 @@ def home():
 
 @app.route('/journal')
 def journal():
-    # if 'token' not in session:
-    #     return redirect(url_for('index'))
+    if 'token' not in session:
+        return redirect(url_for('index'))
     return render_template('journal.html', message=json.dumps({'token': session['token']}))
 
 
@@ -74,6 +75,16 @@ def logout():
     return json.dumps({'message': 'ok', 'redirect': '/'})
 
 
+@app.route('/api/journal_pdf', methods=['POST'])
+def journal_pdf():
+    data = request.form['markdown']
+    if data is None:
+        return {'message': 'no file chosen'}, 400
+    print(data)
+    html = render_template('journal.html', data=data)
+    return render_pdf(HTML(string=html))
+
+
 # API endpoints:
 api.add_resource(UserRegister, '/api/user/register')
 api.add_resource(UserData, '/api/user/data')
@@ -81,7 +92,6 @@ api.add_resource(PicUpload, '/api/pic')
 api.add_resource(PicContent, '/api/pic_content/<path:filepath>')
 api.add_resource(JournalUpload, '/api/journal')
 api.add_resource(JournalContent, '/api/journal_content/<path:filepath>')
-api.add_resource(JournalPDF, '/api/journal_pdf')
 
 
 if __name__ == '__main__':
