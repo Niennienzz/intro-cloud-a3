@@ -80,7 +80,6 @@ def journal_pdf():
     data = request.form['markdown']
     if data is None:
         return {'message': 'no file chosen'}, 400
-    print(data)
     html = render_template('journal.html', data=data)
     return render_pdf(HTML(string=html))
 
