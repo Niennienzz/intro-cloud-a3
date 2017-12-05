@@ -287,28 +287,31 @@ var homePageApp = new Vue({
         downloadJournal: function() {
             let self = this;
             let formData = new FormData();
+            let content = self.compiledMarkdown;
+            let blob = new Blob([content], { type: "text/html"});
             formData.append("markdown", self.compiledMarkdown);
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", self.journalPDFAPI);
-            xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
-            xhr.onload = function(e) {
-                if (this.status == 200) {
-                    let blob = new Blob([this.response], {type: 'application/pdf'});
-                    let downloadUrl = URL.createObjectURL(blob);
-                    let a = document.createElement("a");
-                    a.href = downloadUrl;
-                    a.download = "journal.pdf";
-                    document.body.appendChild(a);
-                    a.click();
-                } else {
-                    swal(
-                        "Oops...",
-                        "Unable to download PDF.",
-                        "error"
-                    );
-                }
-            };
-            xhr.send(formData);
+            let settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": self.journalPDFAPI,
+                "method": "POST",
+                "headers": {
+                    "authorization": "JWT " + self.accessToken
+                },
+                "processData": false,
+                "contentType": false,
+                "mimeType": "multipart/form-data",
+                "data": formData
+            }
+            $.ajax(settings).done(function (data) {
+                let blob = new Blob([data], {type: 'application/pdf'});
+                let downloadUrl = URL.createObjectURL(blob);
+                let link = document.createElement("a");
+                link.href = downloadUrl;
+                link.download = "journal.pdf";
+                document.body.appendChild(link);
+                link.click();
+            });
         },
 
         update: _.debounce(function (e) {
