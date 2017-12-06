@@ -13,6 +13,8 @@ var homePageApp = new Vue({
         isInJournalList: true,
         isInImagesTab: false,
         isInGallery: true,
+        autoJnlTimer: '',
+        autoJnlTimeString: '',
 
 //        userLogoutAPI: '/dev/logout',
 //        userDataAPI: '/dev/api/user/data',
@@ -20,7 +22,7 @@ var homePageApp = new Vue({
 //        imageContentAPI: '/dev/api/pic_content/',
 //        journalUploadAPI: '/dev/api/journal',
 //        journalContentAPI: '/dev/api/journal_content/',
-//        journalPDFAPI: 'dev/api/journal_pdf',
+//        journalPDFAPI: '/dev/api/journal_pdf',
 
         userLogoutAPI: '/logout',
         userDataAPI: '/api/user/data',
@@ -43,8 +45,12 @@ var homePageApp = new Vue({
     // set up on creation values
     created: function() {
 
-        // set access token
         let self = this;
+
+        // set timer
+        self.autoJnlTimer = setInterval(self.autoUploadJournal, 15000);
+
+        // set access token
         token = self.getURLParams()["token"];
         if (token.length == 0) {
             swal(
@@ -278,6 +284,33 @@ var homePageApp = new Vue({
                         "error"
                     );
                     return;
+                }
+            }.bind(xhr, this)
+            xhr.send(formData);
+            return;
+        },
+
+        autoUploadJournal: function() {
+            let self = this;
+            let formElement = document.getElementById("journalFormInput");
+            if (!formElement) {
+                return;
+            }
+            let formData = new FormData();
+            formData.append("file", formElement.value);
+            let xhr = new XMLHttpRequest();
+            let method = "POST";
+            if (self.currentJournal !== '') {
+                method = "PUT";
+                formData.append("filepath", self.currentJournal);
+            }
+            xhr.open(method, self.journalUploadAPI);
+            xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
+            xhr.onreadystatechange = function(vm) {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    let dt = new Date();
+                    let utcDate = dt.toUTCString();
+                    self.autoJnlTimeString = "Auto Saved: " + utcDate;
                 }
             }.bind(xhr, this)
             xhr.send(formData);
