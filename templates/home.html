@@ -35,8 +35,16 @@
             padding: 15px;
             text-align: center;
         }
+
+        .container img {
+            width: 95%;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
     </style>
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/side-menu.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/side-menu.css') }}">
 </head>
 <body>
     <div id="homePageApp">
@@ -109,7 +117,7 @@
                                             <textarea id="journalFormInput" :value="input" @input="update"></textarea>
                                         </div>
                                         <div class="pure-u-1-2">
-                                            <div id="journalPDFInput" v-html="compiledMarkdown"></div>
+                                            <div class="container" id="journalPDFInput" v-html="compiledMarkdown"></div>
                                         </div>
                                     </div>
                                     <input id="uploadJournalButton" type="button" value="Save" class="pure-button pure-button-primary" v-on:click="uploadJournal()">
