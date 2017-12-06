@@ -1,10 +1,9 @@
 import uuid
 import datetime
 from os import path
-from flask import request, make_response, render_template
+from flask import request, make_response
 from flask_restful import Resource
 from flask_jwt import jwt_required, current_identity
-from flask_weasyprint import HTML, render_pdf
 from models.user import UserModel
 from store.s3 import S3Store
 
@@ -71,26 +70,6 @@ class JournalUpload(Resource):
 			return {'message': 'journal upload - internal server error'}, 500
 
 		return {'message': 'file uploaded successfully'}
-
-
-class JournalPDF(Resource):
-	"""
-	JournalPDF provides journal PDF API.
-	"""
-	@jwt_required()
-	def post(self):
-		"""
-		Extract a journal as PDF.
-
-		:return:
-			(JSON): Journal upload success or fail message.
-			(int): HTTP status code.
-		"""
-		f = request.form['file']
-		if f is None:
-			return {'message': 'no file chosen'}, 400
-		html = render_template('journal.html')
-		return render_pdf(HTML(string=html))
 
 
 class JournalContent(Resource):
