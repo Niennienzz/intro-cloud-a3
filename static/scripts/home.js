@@ -254,6 +254,21 @@ var homePageApp = new Vue({
             return;
         },
 
+        insertImageToJournal: function() {
+            let self = this;
+            let imageList = '';
+            for (let i = 0; i < self.thumbnailURLList.length; i++) {
+                imageList += '<img src=' + self.thumbnailURLList[i] + ' onclick="copyImageUrl(src)">';
+            }
+
+            swal({
+                title: 'Select Image',
+                html: imageList,
+                focusConfirm: false,
+                confirmButtonText: 'Cancel'
+            });
+        },
+
         uploadJournal: function() {
             let self = this;
             let formElement = document.getElementById("journalFormInput");
@@ -390,3 +405,39 @@ var homePageApp = new Vue({
     }
 
 })
+
+function copyImageUrl(src) {
+
+    let index = src.indexOf("/dev/api");
+
+    if (index === -1) {
+        index = src.indexOf("/api");
+    }
+
+    let imgUrl = src.substring(index);
+    imgUrl = imgUrl.replace("thumbnail.jpg", "origin.jpg");
+    imgUrl = "![Pic](" + imgUrl + ")";
+
+    let link = document.createElement('textarea');
+    link.value = imgUrl;
+    document.body.appendChild(link);
+    link.select();
+    document.execCommand('copy');
+    link.click();
+    let successful = document.body.removeChild(link);
+
+    if (successful) {
+        swal(
+            "Copied!",
+            "Image URL copied to clipboard.",
+            "success"
+        );
+    } else {
+        swal(
+            "Oops...",
+            "Unable to copy image URL.",
+            "error"
+        );
+    }
+
+}
