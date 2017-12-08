@@ -422,9 +422,9 @@ function copyImageUrl(src) {
     link.value = imgUrl;
     document.body.appendChild(link);
     link.select();
-    document.execCommand('copy');
+    let successful = document.execCommand('copy');
     link.click();
-    let successful = document.body.removeChild(link);
+    document.body.removeChild(link);
 
     if (successful) {
         swal(
