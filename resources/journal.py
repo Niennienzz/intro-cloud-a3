@@ -90,9 +90,9 @@ class JournalUpload(Resource):
 			user.update_user()
 		except IOError as e:
 			print(e)
-			return {'message': 'journal upload - internal server error'}, 500
+			return {'message': 'journal delete - internal server error'}, 500
 
-		return {'message': 'file uploaded successfully'}
+		return {'message': 'file deleted successfully'}
 
 
 class JournalContent(Resource):
@@ -119,17 +119,3 @@ class JournalContent(Resource):
 		response = make_response(data)
 		response.headers['content-type'] = 'text/plain'
 		return response
-
-	@jwt_required()
-	def delete(self, filepath):
-		"""
-		Delete a journal data. (GET)
-
-		This method deletes a journal in the storage.
-		It also updates the user database.
-
-		:returns:
-			(int): HTTP status code, 200 for Success, 400 for Bad Request, and 404 for Not Found.
-		"""
-		if not filepath:
-			return {'message': 'no journal found'}, 400

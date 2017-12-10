@@ -207,6 +207,53 @@ var homePageApp = new Vue({
             return;
         },
 
+        deleteImage: function() {
+            let self = this;
+            let currentTransforms = self.currentTransforms;
+            if (currentTransforms.length === 0) {
+                return;
+            }
+            let src = currentTransforms[0];
+            let index = src.indexOf(self.imageContentAPI);
+            let imgUrl = src.substring(index + self.imageContentAPI.length);
+            swal({
+                title: 'Are you sure?',
+                text: 'This image will be deleted.',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then( function() {
+                let formData = new FormData();
+                formData.append("filepath", imgUrl);
+                let xhr = new XMLHttpRequest();
+                xhr.open("DELETE", self.imageUploadAPI);
+                xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
+                xhr.onreadystatechange = function(vm) {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        swal(
+                            "Success!",
+                            "Journal deleted successfully.",
+                            "success"
+                        ).then( function() {
+                            self.refreshUser();
+                            self.switchToImagesTab();
+                        });
+                    }
+                    else if (xhr.readyState == 4 && xhr.status == 400) {
+                        swal(
+                            "Oops...",
+                            "Seems that no journal is chosen.",
+                            "error"
+                        );
+                        return;
+                    }
+                }.bind(xhr, this)
+                xhr.send(formData);
+            });
+        },
+
         redirectToWelcome: function() {
             let self = this;
             let xhr = new XMLHttpRequest();

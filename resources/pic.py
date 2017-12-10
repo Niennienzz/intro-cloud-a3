@@ -38,6 +38,32 @@ class PicUpload(Resource):
 
 		return {'message': 'file uploaded successfully'}
 
+	@jwt_required()
+	def delete(self):
+		filepath = request.form['filepath']
+		if filepath is None:
+			return {'message': 'no filepath chosen'}, 400
+		print(filepath)
+
+		# delete from s3
+		s3 = S3Store(filepath, None)
+		(result_path, ok) = s3.delete()
+		print(result_path)
+		if not ok:
+			return {'message': 'image delete - internal server error'}, 500
+
+		try:
+			# update database
+			user = UserModel.get_user('username', current_identity.id)
+			print(user.json())
+			user.images.remove(result_path)
+			user.update_user()
+		except IOError as e:
+			print(e)
+			return {'message': 'image delete - internal server error'}, 500
+
+		return {'message': 'file deleted successfully'}
+
 
 class PicContent(Resource):
 	"""
@@ -66,17 +92,3 @@ class PicContent(Resource):
 		response = make_response(data)
 		response.headers['content-type'] = 'image/jpeg'
 		return response
-
-	@jwt_required()
-	def delete(self, filepath):
-		"""
-		Delete an image data. (GET)
-
-		This method deletes an image in the storage.
-		It also updates the user database.
-
-		:returns:
-			(int): HTTP status code, 200 for Success, 400 for Bad Request, and 404 for Not Found.
-		"""
-		if not filepath:
-			return {'message': 'no image found'}, 400

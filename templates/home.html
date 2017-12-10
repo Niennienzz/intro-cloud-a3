@@ -172,6 +172,7 @@
                         <div v-for="(url, index) in currentTransforms" class="pure-control-group">
                             <center><img v-bind:src=url></center>
                         </div>
+                        <input id="deleteImageButton" type="button" value="Delete" class="pure-button pure-button-primary" v-on:click="deleteImage()">
                     </div>
                 </div>
             </div>
