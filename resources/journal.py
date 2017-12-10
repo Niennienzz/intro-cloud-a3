@@ -12,6 +12,7 @@ class JournalUpload(Resource):
 	"""
 	JournalUpload provides journal upload API.
 	"""
+
 	@jwt_required()
 	def post(self):
 		"""
@@ -99,6 +100,7 @@ class JournalContent(Resource):
 	"""
 	JournalContent provides journal data access API.
 	"""
+
 	def get(self, filepath):
 		"""
 		Retrieve a journal data. (GET)

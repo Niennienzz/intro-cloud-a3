@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <!-- Pure CSS -->
-<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
+      integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
 <!-- Marked -->
 <script src="https://unpkg.com/marked@0.3.6"></script>
@@ -50,134 +51,150 @@
             margin-left: auto;
             margin-right: auto;
         }
+
     </style>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/side-menu.css') }}">
 </head>
 <body>
-    <div id="homePageApp">
-        <a href="#menu" id="menuLink" class="menu-link">
-            <span></span>
-        </a>
+<div id="homePageApp">
+    <a href="#menu" id="menuLink" class="menu-link">
+        <span></span>
+    </a>
 
-        <div id="menu">
-            <div class="pure-menu">
-                <a class="pure-menu-heading" href="#" v-on:click="switchToHomeTab()">Home</a>
-                <ul class="pure-menu-list">
-                    <li class="pure-menu-item" v-on:click="switchToJournalsTab()"><a href="#" class="pure-menu-link">Journals</a></li>
-                    <li class="pure-menu-item" v-on:click="switchToImagesTab()"><a href="#" class="pure-menu-link">Images</a></li>
-                </ul>
-            </div>
+    <div id="menu">
+        <div class="pure-menu">
+            <a class="pure-menu-heading" href="#" v-on:click="switchToHomeTab()">Home</a>
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item" v-on:click="switchToJournalsTab()"><a href="#" class="pure-menu-link">Journals</a>
+                </li>
+                <li class="pure-menu-item" v-on:click="switchToImagesTab()"><a href="#"
+                                                                               class="pure-menu-link">Images</a></li>
+            </ul>
         </div>
+    </div>
 
-        <div v-if="isInHomeTab">
-            <div class="header">
-                <h1>Welcome to Smart Journal</h1>
-                <h2>A website you can easily manage journals and images.</h2>
-            </div>
-            <div class="content">
-                <h2 class="content-subhead">Your Journals</h2>
-                <p>
-                    Manage your journals using the &ltJournals&gt button on the left menu.
-                </p>
+    <div v-if="isInHomeTab">
+        <div class="header">
+            <h1>Welcome to Smart Journal</h1>
+            <h2>A website you can easily manage journals and images.</h2>
+        </div>
+        <div class="content">
+            <h2 class="content-subhead">Your Journals</h2>
+            <p>
+                Manage your journals using the &ltJournals&gt button on the left menu.
+            </p>
 
-                <h2 class="content-subhead">Manage Your Images</h2>
-                <p>
-                    Manage your images using the &ltImages&gt button on the left menu.
-                </p>
-                <div class="pure-g">
-                    <div class="pure-control-group" style="clear:left;">
-                        <div v-for="(url, index) in thumbnailURLList" class="gallery pure-control-group">
-                            <img class="pure-img-responsive" v-bind:src=url>
-                        </div>
+            <h2 class="content-subhead">Manage Your Images</h2>
+            <p>
+                Manage your images using the &ltImages&gt button on the left menu.
+            </p>
+            <div class="pure-g">
+                <div class="pure-control-group" style="clear:left;">
+                    <div v-for="(url, index) in thumbnailURLList" class="gallery pure-control-group">
+                        <img class="pure-img-responsive" v-bind:src=url>
                     </div>
                 </div>
-                <div class="pure-control-group" style="clear:left;"><br>
-                    <button class="pure-button pure-button-primary" v-on:click="redirectToWelcome()">Logout</button>
-                </div>
+            </div>
+            <div class="pure-control-group" style="clear:left;"><br>
+                <button class="pure-button pure-button-primary" v-on:click="redirectToWelcome()">Logout</button>
             </div>
         </div>
+    </div>
 
-        <div v-if="isInJournalsTab">
-            <div class="header">
-                <h1>Manage Journals</h1>
-                <h2>A website you can easily manage journals and images.</h2>
-            </div>
-            <div class="content">
-                <div v-if="isInJournalList">
-                    <h2 class="content-subhead">Journals</h2>
-                    <div class="pure-control-group" style="clear:left;">
-                        <div v-for="(url, index) in journalURLList" class="pure-control-group">
-                            <p v-on:click="switchToJournalEditorView(url)" v-bind:src=url>Journal #${index+1}</p>
-                        </div>
-                    </div><br>
-                    <button class="pure-button pure-button-primary" v-on:click="switchToJournalEditorView('')">New Journal</button>
+    <div v-if="isInJournalsTab">
+        <div class="header">
+            <h1>Manage Journals</h1>
+            <h2>A website you can easily manage journals and images.</h2>
+        </div>
+        <div class="content">
+            <div v-if="isInJournalList">
+                <h2 class="content-subhead">Journals</h2>
+                <div class="pure-control-group" style="clear:left;">
+                    <div v-for="(url, index) in journalURLList" class="pure-control-group">
+                        <p v-on:click="switchToJournalEditorView(url)" v-bind:src=url>Journal #${index+1}</p>
+                    </div>
                 </div>
-                <div v-else>
-                    <h2 class="content-subhead">New Journal</h2>
-                    <h3 class="content-subhead">${ autoJnlTimeString }</h3>
-                    <button class="pure-button pure-button-primary" v-on:click="insertImageToJournal()">Insert Image</button>
-                    <div class="pure-controls">
-                        <form id="uploadJournalForm" enctype="multipart/form-data" method="post" class="pure-form">
-                            <fieldset>
-                                <div id="editor">
-                                    <div class="pure-g">
-                                        <div class="pure-u-1-2">
-                                            <textarea id="journalFormInput" :value="input" @input="update"></textarea>
-                                        </div>
-                                        <div class="pure-u-1-2">
-                                            <div class="container" id="journalPDFInput" v-html="compiledMarkdown"></div>
-                                        </div>
+                <br>
+                <button class="pure-button pure-button-primary" v-on:click="switchToJournalEditorView('')">New Journal
+                </button>
+            </div>
+            <div v-else>
+                <h2 class="content-subhead">New Journal</h2>
+                <h3 class="content-subhead">${ autoJnlTimeString }</h3>
+                <button class="pure-button pure-button-primary" v-on:click="insertImageToJournal()">Insert Image
+                </button>
+                <div class="pure-controls">
+                    <form id="uploadJournalForm" enctype="multipart/form-data" method="post" class="pure-form">
+                        <fieldset>
+                            <div id="editor">
+                                <div class="pure-g">
+                                    <div class="pure-u-1-2">
+                                        <textarea id="journalFormInput" :value="input" @input="update"></textarea>
                                     </div>
-                                    <input id="uploadJournalButton" type="button" value="Save" class="pure-button pure-button-primary" v-on:click="uploadJournal()">
-                                    <input id="extractJournalButton" type="button" value="Download PDF" class="pure-button pure-button-primary" v-on:click="downloadJournal()">
-                                    <input id="deleteJournalButton" type="button" value="Delete" class="pure-button pure-button-primary" v-on:click="deleteJournal()">
+                                    <div class="pure-u-1-2">
+                                        <div class="container" id="journalPDFInput" v-html="compiledMarkdown"></div>
+                                    </div>
                                 </div>
-                            </fieldset>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div v-if="isInImagesTab">
-            <div class="header">
-                <h1>Manage Images</h1>
-                <h2>A website you can easily manage journals and images.</h2>
-            </div>
-            <div class="content">
-                <div v-if="isInGallery">
-                    <h2 class="content-subhead">Upload Image</h2>
-                    <div class="pure-controls" style="clear:left;"><br>
-                        <form id="uploadImageForm" enctype="multipart/form-data" method="post" class="pure-form">
-                            <fieldset>
-                                <input id="uploadImageButton" type="button" value="Upload" class="pure-button pure-button-primary" v-on:click="uploadNewImage()">
-                                <input id="uploadImageFormInput" class="pure-controls" type="file" name="file" required />
-                            </fieldset>
-                        </form>
-                    </div><br>
-                    <div class="pure-control-group" style="clear:left;">
-                        <div v-for="(url, index) in thumbnailURLList" class="gallery pure-control-group">
-                            <img v-on:click="switchToImageTransformView(index)" v-bind:src=url>
-                            <div class="desc" v-on:click="switchToImageTransformView(index)">Image #${index+1}</div>
-                        </div>
-                    </div><br>
-                </div>
-
-                <div v-else>
-                    <h2 class="content-subhead">Image Details</h2>
-                    <div class="pure-control-group" style="clear:left;">
-                        <br><button class="pure-button pure-button-primary" v-on:click="switchToImagesTab()">Back to Gallery</button>
-                    </div><br>
-                    <div class="pure-control-group" style="clear:left;">
-                        <div v-for="(url, index) in currentTransforms" class="pure-control-group">
-                            <center><img v-bind:src=url></center>
-                        </div>
-                        <input id="deleteImageButton" type="button" value="Delete" class="pure-button pure-button-primary" v-on:click="deleteImage()">
-                    </div>
+                                <input id="uploadJournalButton" type="button" value="Save"
+                                       class="pure-button pure-button-primary" v-on:click="uploadJournal()">
+                                <input id="extractJournalButton" type="button" value="Download PDF"
+                                       class="pure-button pure-button-primary" v-on:click="downloadJournal()">
+                                <input id="deleteJournalButton" type="button" value="Delete"
+                                       class="pure-button pure-button-primary" v-on:click="deleteJournal()">
+                            </div>
+                        </fieldset>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <div v-if="isInImagesTab">
+        <div class="header">
+            <h1>Manage Images</h1>
+            <h2>A website you can easily manage journals and images.</h2>
+        </div>
+        <div class="content">
+            <div v-if="isInGallery">
+                <h2 class="content-subhead">Upload Image</h2>
+                <div class="pure-controls" style="clear:left;"><br>
+                    <form id="uploadImageForm" enctype="multipart/form-data" method="post" class="pure-form">
+                        <fieldset>
+                            <input id="uploadImageButton" type="button" value="Upload"
+                                   class="pure-button pure-button-primary" v-on:click="uploadNewImage()">
+                            <input id="uploadImageFormInput" class="pure-controls" type="file" name="file" required/>
+                        </fieldset>
+                    </form>
+                </div>
+                <br>
+                <div class="pure-control-group" style="clear:left;">
+                    <div v-for="(url, index) in thumbnailURLList" class="gallery pure-control-group">
+                        <img v-on:click="switchToImageTransformView(index)" v-bind:src=url>
+                        <div class="desc" v-on:click="switchToImageTransformView(index)">Image #${index+1}</div>
+                    </div>
+                </div>
+                <br>
+            </div>
+
+            <div v-else>
+                <h2 class="content-subhead">Image Details</h2>
+                <div class="pure-control-group" style="clear:left;">
+                    <br>
+                    <button class="pure-button pure-button-primary" v-on:click="switchToImagesTab()">Back to Gallery
+                    </button>
+                </div>
+                <br>
+                <div class="pure-control-group" style="clear:left;">
+                    <div v-for="(url, index) in currentTransforms" class="pure-control-group">
+                        <center><img v-bind:src=url></center>
+                    </div>
+                    <input id="deleteImageButton" type="button" value="Delete" class="pure-button pure-button-primary"
+                           v-on:click="deleteImage()">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
 <script type="text/javascript" src="{{url_for('static', filename='scripts/home.js')}}"></script>

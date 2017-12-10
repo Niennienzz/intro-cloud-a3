@@ -18,15 +18,15 @@ from resources.journal import JournalUpload, JournalContent
 # Flask-JWT tokens have expiration time of one day.
 # ImageMagick path is acquired from Lambda system.
 def create_app():
-    ap = Flask(__name__)
-    ap.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
-    ap.secret_key = 'An_App_Secret_Key'
-    exec_dir = os.getcwd()
-    sys.path.append(join(exec_dir, 'site-packages'))
-    os.environ['MAGICK_HOME'] = exec_dir
-    lib_dir = join(exec_dir, 'lib')
-    sys.path.append(lib_dir)
-    return ap
+	ap = Flask(__name__)
+	ap.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
+	ap.secret_key = 'An_App_Secret_Key'
+	exec_dir = os.getcwd()
+	sys.path.append(join(exec_dir, 'site-packages'))
+	os.environ['MAGICK_HOME'] = exec_dir
+	lib_dir = join(exec_dir, 'lib')
+	sys.path.append(lib_dir)
+	return ap
 
 
 # Flask-JWT authorization, which by default register the route
@@ -43,40 +43,40 @@ jwt = JWT(app, authenticate, identity)
 # '/logout' for user logout.
 @app.route('/')
 def index():
-    return render_template('index.html')
+	return render_template('index.html')
 
 
 @app.route('/home')
 def home():
-    if 'token' not in session:
-        return redirect(url_for('index'))
-    return render_template('home.html', messages=json.dumps({'token': session['token']}))
+	if 'token' not in session:
+		return redirect(url_for('index'))
+	return render_template('home.html', messages=json.dumps({'token': session['token']}))
 
 
 @app.route('/journal')
 def journal():
-    if 'token' not in session:
-        return redirect(url_for('index'))
-    return render_template('journal.html', message=json.dumps({'token': session['token']}))
+	if 'token' not in session:
+		return redirect(url_for('index'))
+	return render_template('journal.html', message=json.dumps({'token': session['token']}))
 
 
 @app.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        token = request.form['token']
-        session['token'] = token
-        return json.dumps({'message': 'ok', 'redirect': '/home?token='+token})
+	if request.method == 'POST':
+		token = request.form['token']
+		session['token'] = token
+		return json.dumps({'message': 'ok', 'redirect': '/home?token=' + token})
 
 
 @app.route('/logout')
 def logout():
-    session.pop('token', None)
-    return json.dumps({'message': 'ok', 'redirect': '/'})
+	session.pop('token', None)
+	return json.dumps({'message': 'ok', 'redirect': '/'})
 
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+	return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 # API endpoints:
@@ -87,6 +87,5 @@ api.add_resource(PicContent, '/api/pic_content/<path:filepath>')
 api.add_resource(JournalUpload, '/api/journal')
 api.add_resource(JournalContent, '/api/journal_content/<path:filepath>')
 
-
 if __name__ == '__main__':
-    app.run()
+	app.run()

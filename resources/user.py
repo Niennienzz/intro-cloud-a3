@@ -63,6 +63,7 @@ class UserData(Resource):
 	parser (RequestParser): The Flask-RESTful request parser.
 	It parses username and password from the JSON payload during user registration.
 	"""
+
 	@jwt_required()
 	def get(self):
 		"""

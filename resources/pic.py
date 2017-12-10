@@ -10,6 +10,7 @@ class PicUpload(Resource):
 	"""
 	PicUpload provides image upload API.
 	"""
+
 	@jwt_required()
 	def post(self):
 		"""
@@ -69,6 +70,7 @@ class PicContent(Resource):
 	"""
 	PicContent provides image data access API.
 	"""
+
 	def get(self, filepath):
 		"""
 		Retrieve an image data. (GET)
