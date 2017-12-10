@@ -16,21 +16,21 @@ var homePageApp = new Vue({
         autoJnlTimer: '',
         autoJnlTimeString: '',
 
-//        userLogoutAPI: '/dev/logout',
-//        userDataAPI: '/dev/api/user/data',
-//        imageUploadAPI: '/dev/api/pic',
-//        imageContentAPI: '/dev/api/pic_content/',
-//        journalUploadAPI: '/dev/api/journal',
-//        journalContentAPI: '/dev/api/journal_content/',
-//        journalPDFAPI: '/dev/api/journal_pdf',
+        userLogoutAPI: '/dev/logout',
+        userDataAPI: '/dev/api/user/data',
+        imageUploadAPI: '/dev/api/pic',
+        imageContentAPI: '/dev/api/pic_content/',
+        journalUploadAPI: '/dev/api/journal',
+        journalContentAPI: '/dev/api/journal_content/',
+        journalPDFAPI: '/dev/api/journal_pdf',
 
-        userLogoutAPI: '/logout',
-        userDataAPI: '/api/user/data',
-        imageUploadAPI: '/api/pic',
-        imageContentAPI: '/api/pic_content/',
-        journalUploadAPI: '/api/journal',
-        journalContentAPI: '/api/journal_content/',
-        journalPDFAPI: '/api/journal_pdf',
+//        userLogoutAPI: '/logout',
+//        userDataAPI: '/api/user/data',
+//        imageUploadAPI: '/api/pic',
+//        imageContentAPI: '/api/pic_content/',
+//        journalUploadAPI: '/api/journal',
+//        journalContentAPI: '/api/journal_content/',
+//        journalPDFAPI: '/api/journal_pdf',
 
         accessToken: '',
         currentUser: {},
@@ -58,8 +58,8 @@ var homePageApp = new Vue({
                 "Invalid user access token, please log in again.",
                 "error"
             ).then( function() {
-//                window.location.href = "/dev";
-                window.location.href = "/";
+                window.location.href = "/dev";
+//                window.location.href = "/";
             });
             return;
         }
@@ -81,8 +81,8 @@ var homePageApp = new Vue({
                     "Invalid user access token, please log in again.",
                     "error"
                 ).then( function() {
-//                    window.location.href = "/dev";
-                    window.location.href = "/";
+                    window.location.href = "/dev";
+//                    window.location.href = "/";
                 });
                 return;
             }
@@ -265,8 +265,8 @@ var homePageApp = new Vue({
                         "You are now logged out.",
                         "success"
                     ).then( function() {
-//                        window.location.href = "/dev";
-                        window.location.href = "/";
+                        window.location.href = "/dev";
+//                        window.location.href = "/";
                     });
                     return;
                 }
@@ -292,8 +292,8 @@ var homePageApp = new Vue({
                         "Invalid user access token, please log in again.",
                         "error"
                     ).then( function() {
-//                        window.location.href = "/dev";
-                        window.location.href = "/";
+                        window.location.href = "/dev";
+//                        window.location.href = "/";
                     });
                     return;
                 }

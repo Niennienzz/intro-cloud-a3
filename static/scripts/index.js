@@ -7,13 +7,13 @@ var welcomePageApp = new Vue({
     data: {
         isOnLoginTab: true,
 
-//        userAuthAPI: '/dev/auth',
-//        userLoginAPI: '/dev/login',
-//        userRegisterAPI: '/dev/api/user/register'
+        userAuthAPI: '/dev/auth',
+        userLoginAPI: '/dev/login',
+        userRegisterAPI: '/dev/api/user/register'
 
-        userAuthAPI: '/auth',
-        userLoginAPI: '/login',
-        userRegisterAPI: '/api/user/register'
+//        userAuthAPI: '/auth',
+//        userLoginAPI: '/login',
+//        userRegisterAPI: '/api/user/register'
     },
 
     // methods controlling the view
@@ -125,8 +125,8 @@ var welcomePageApp = new Vue({
                         "Redirecting to home page...",
                         "success"
                     ).then( function() {
-//                        window.location.href = "/dev" + jsonResponse.redirect;
-                        window.location.href = jsonResponse.redirect;
+                        window.location.href = "/dev" + jsonResponse.redirect;
+//                        window.location.href = jsonResponse.redirect;
                     });
                     return;
                 }
