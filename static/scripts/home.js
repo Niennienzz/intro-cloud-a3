@@ -334,28 +334,19 @@ var homePageApp = new Vue({
 
         downloadJournal: function() {
             let self = this;
-            let formData = new FormData();
-            formData.append("markdown", self.compiledMarkdown);
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", self.journalPDFAPI);
-            xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
-            xhr.responseType = "blob";
-            xhr.onload = function(e) {
-                if (this.status == 200) {
-                    let blob = xhr.response;
-                    let link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = "journal.pdf";
-                    link.click();
-                } else {
-                    swal(
-                        "Oops...",
-                        "Unable to download PDF.",
-                        "error"
-                    );
+            let elementHandlers = {
+                '#journalPDFInput': function(element, renderer) {
+                    return true;
                 }
             };
-            xhr.send(formData);
+            let pdf = new jsPDF("p", "pt", "a4");
+            let source = document.getElementById("journalPDFInput");
+            pdf.fromHTML(source, 15, 15, {
+                'width': 180,
+                'elementHandlers': elementHandlers
+            }, function() {
+                pdf.save('journal.pdf');
+            });
         },
 
         update: _.debounce(function (e) {

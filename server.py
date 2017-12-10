@@ -5,8 +5,7 @@ from os.path import join
 from datetime import timedelta
 from flask import Flask, session, request, render_template, redirect, url_for
 from flask_restful import Api
-from flask_jwt import JWT, jwt_required
-from flask_weasyprint import HTML, render_pdf
+from flask_jwt import JWT
 from security import authenticate, identity
 from resources.user import UserRegister, UserData
 from resources.pic import PicUpload, PicContent
@@ -73,16 +72,6 @@ def login():
 def logout():
     session.pop('token', None)
     return json.dumps({'message': 'ok', 'redirect': '/'})
-
-
-@app.route('/api/journal_pdf', methods=['POST'])
-@jwt_required()
-def journal_pdf():
-    data = request.form['markdown']
-    if data is None:
-        return {'message': 'no file chosen'}, 400
-    html = render_template('journal.html', data=data)
-    return render_pdf(HTML(string=html))
 
 
 # API endpoints:

@@ -5,6 +5,7 @@
       <w>debounce</w>
       <w>dynamodb</w>
       <w>magick</w>
+      <w>weasy</w>
     </words>
   </dictionary>
 </component>
