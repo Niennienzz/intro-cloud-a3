@@ -46,7 +46,7 @@ class JournalUpload(Resource):
 			print(e)
 			return {'message': 'journal upload - internal server error'}, 500
 
-		return {'message': 'file uploaded successfully', 'url': 'result_path'}
+		return {'message': 'file uploaded successfully', 'url': result_path}
 
 	@jwt_required()
 	def put(self):
