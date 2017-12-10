@@ -405,6 +405,9 @@ var homePageApp = new Vue({
 
         autoUploadJournal: function() {
             let self = this;
+            if (self.currentJournal === "") {
+                return;
+            }
             let formElement = document.getElementById("journalFormInput");
             if (!formElement) {
                 return;
