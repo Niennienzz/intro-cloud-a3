@@ -146,6 +146,7 @@ var homePageApp = new Vue({
             }
             else {
                 self.currentJournal = '';
+                self.input = '# Hello';
             }
         },
 
@@ -190,7 +191,7 @@ var homePageApp = new Vue({
                         "Image uploaded successfully.",
                         "success"
                     ).then( function() {
-                        self.refreshPicUrls();
+                        self.refreshUser();
                     });
                 }
                 else if (xhr.readyState == 4 && xhr.status == 400) {
@@ -227,7 +228,7 @@ var homePageApp = new Vue({
             return
         },
 
-        refreshPicUrls: function() {
+        refreshUser: function() {
             let self = this;
             let xhr = new XMLHttpRequest();
             xhr.open("GET", self.userDataAPI)
@@ -288,8 +289,14 @@ var homePageApp = new Vue({
                         "Success!",
                         "Journal uploaded successfully.",
                         "success"
-                    ).then( function() {
-                        self.refreshPicUrls();
+                        ).then( function() {
+                            // refresh user data
+                            self.refreshUser();
+                            // set journal url if this is a new journal
+                            if (self.currentJournal === "") {
+                                let jsonResponse = JSON.parse(xhr.responseText);
+                                self.currentJournal = jsonResponse.url;
+                            }
                     });
                 }
                 else if (xhr.readyState == 4 && xhr.status == 400) {
@@ -303,6 +310,50 @@ var homePageApp = new Vue({
             }.bind(xhr, this)
             xhr.send(formData);
             return;
+        },
+
+        deleteJournal: function() {
+            let self = this;
+            let currentJournal = self.currentJournal;
+            if (currentJournal === "") {
+                return;
+            }
+            swal({
+                title: 'Are you sure?',
+                text: 'This journal will be deleted.',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then( function() {
+                let formData = new FormData();
+                formData.append("filepath", currentJournal);
+                let xhr = new XMLHttpRequest();
+                xhr.open("DELETE", self.journalUploadAPI);
+                xhr.setRequestHeader("Authorization", "JWT " + self.accessToken);
+                xhr.onreadystatechange = function(vm) {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        swal(
+                            "Success!",
+                            "Journal deleted successfully.",
+                            "success"
+                        ).then( function() {
+                            self.refreshUser();
+                            self.switchToJournalsTab();
+                        });
+                    }
+                    else if (xhr.readyState == 4 && xhr.status == 400) {
+                        swal(
+                            "Oops...",
+                            "Seems that no journal is chosen.",
+                            "error"
+                        );
+                        return;
+                    }
+                }.bind(xhr, this)
+                xhr.send(formData);
+            });
         },
 
         autoUploadJournal: function() {
@@ -384,7 +435,7 @@ var homePageApp = new Vue({
                 }
             }.bind(xhr, this)
             xhr.send();
-            }
+        }
 
     },
 

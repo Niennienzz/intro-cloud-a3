@@ -45,7 +45,7 @@ class JournalUpload(Resource):
 			print(e)
 			return {'message': 'journal upload - internal server error'}, 500
 
-		return {'message': 'file uploaded successfully'}
+		return {'message': 'file uploaded successfully', 'url': 'result_path'}
 
 	@jwt_required()
 	def put(self):
@@ -67,6 +67,29 @@ class JournalUpload(Resource):
 		s3 = S3Store(filepath, f)
 		(result_path, ok) = s3.sync_save()
 		if not ok:
+			return {'message': 'journal upload - internal server error'}, 500
+
+		return {'message': 'file uploaded successfully'}
+
+	@jwt_required()
+	def delete(self):
+		filepath = request.form['filepath']
+		if filepath is None:
+			return {'message': 'no filepath chosen'}, 400
+
+		# delete from s3
+		s3 = S3Store(filepath, None)
+		(result_path, ok) = s3.delete()
+		if not ok:
+			return {'message': 'journal delete - internal server error'}, 500
+
+		try:
+			# update database
+			user = UserModel.get_user('username', current_identity.id)
+			user.journals.remove(result_path)
+			user.update_user()
+		except IOError as e:
+			print(e)
 			return {'message': 'journal upload - internal server error'}, 500
 
 		return {'message': 'file uploaded successfully'}

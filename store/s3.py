@@ -75,7 +75,7 @@ class S3Store:
             return None, False
         return self.data, True
 
-    async def delete(self):
+    def delete(self):
         """Delete file.
 
         This method deletes the data from AWS S3 using key.
