@@ -3,7 +3,7 @@ import sys
 import os
 from os.path import join
 from datetime import timedelta
-from flask import Flask, session, request, render_template, redirect, url_for
+from flask import Flask, session, request, render_template, redirect, url_for, send_from_directory
 from flask_restful import Api
 from flask_jwt import JWT
 from security import authenticate, identity
@@ -72,6 +72,11 @@ def login():
 def logout():
     session.pop('token', None)
     return json.dumps({'message': 'ok', 'redirect': '/'})
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 # API endpoints:
